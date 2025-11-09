@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Economy Hub — Prototype</title>
+  <meta name="description" content="Light-themed 2025 frontend prototype — silky responsive Student Economy dashboard, marketplace and tips (HTML/CSS/JS)." />
+
+  <!-- Design system variables (Light theme) -->
+  <style>
+    :root{
+      --bg: #f6f7fb; /* soft linen */
+      --card: rgba(255,255,255,0.65);
+      --glass-border: rgba(255,255,255,0.6);
+      --accent: #6c5ce7; /* violet-blue */
+      --accent-2: #00b894; /* mint */
+      --muted: #7b7f93;
+      --text: #0f1724;
+      --glass-shadow: 0 6px 30px rgba(22, 28, 45, 0.06);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --glass-blur: 10px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    /* Reset + base */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(108,92,231,0.06), transparent),
+                  radial-gradient(900px 500px at 90% 90%, rgba(0,184,148,0.03), transparent),
+                  var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.4;
+      padding:36px;
+    }
+
+    /* App container */
+    .app{
+      max-width:1200px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:28px;
+      align-items:start;
+    }
+
+    /* Header */
+    header.app-header{
+      grid-column:1 / -1;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+    }
+
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .logo{
+      width:56px;height:56px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow: 0 8px 30px rgba(108,92,231,0.14), inset 0 -6px 16px rgba(255,255,255,0.14);
+      display:grid;place-items:center;color:white;font-weight:700;font-size:18px;
+    }
+    .brand h1{margin:0;font-size:18px;letter-spacing:-0.2px}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+
+    nav.primary{
+      display:flex;gap:12px;align-items:center
+    }
+    nav.primary a{color:var(--text);text-decoration:none;padding:8px 12px;border-radius:10px;font-weight:600}
+    nav.primary a:hover{background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.6));box-shadow:var(--glass-shadow)}
+
+    /* Glass card base */
+    .card{
+      background: var(--card);
+      border-radius:var(--radius);
+      padding:18px;
+      backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+    }
+
+    /* Hero / Overview */
+    .hero{
+      display:flex;gap:20px;align-items:center;justify-content:space-between;
+    }
+
+    .hero-left{
+      min-width:0;
+    }
+    .hero-title{font-size:20px;margin:0 0 6px 0}
+    .hero-sub{color:var(--muted);margin:0 0 18px 0}
+
+    .balance{
+      display:flex;gap:14px;align-items:center
+    }
+    .balance-amount{font-weight:800;font-size:28px}
+    .badge{background:linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.45));padding:6px 10px;border-radius:999px;font-weight:700}
+
+    /* Quick controls */
+    .controls{display:flex;gap:10px}
+    .btn{padding:10px 14px;border-radius:12px;border:0;background:white;font-weight:700;box-shadow:0 6px 18px rgba(12,18,35,0.06);cursor:pointer}
+    .btn.secondary{background:transparent;border:1px solid rgba(15,23,36,0.06)}
+
+    /* Left column layout */
+    .left-col{display:grid;gap:20px}
+
+    /* Small stat cards */\    
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .stat{padding:14px;border-radius:12px}
+    .stat h3{margin:0;font-size:14px}
+    .stat p{margin:6px 0 0 0;font-weight:800}
+
+    /* Transactions + chart */
+    .panel{display:grid;grid-template-columns:1fr 320px;gap:16px}
+    .transactions{overflow:hidden}
+    .tx-list{display:flex;flex-direction:column;gap:12px;max-height:380px;overflow:auto;padding-right:6px}
+    .tx{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:12px}
+    .tx .meta{display:flex;gap:12px;align-items:center}
+    .avatar{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-weight:700}
+    .tx .amount{font-weight:800}
+
+    /* Right column */
+    .right-col{display:flex;flex-direction:column;gap:18px}
+
+    /* Marketplace */
+    .market{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .market-card{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:12px}
+    .market-card img{width:100%;border-radius:8px;object-fit:cover;height:120px}
+
+    /* Tips */
+    .tips li{margin-bottom:10px}
+
+    /* Footer */
+    footer{grid-column:1 / -1;margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* Responsive */
+    @media (max-width:1000px){
+      .app{grid-template-columns:1fr;padding:16px}
+      .panel{grid-template-columns:1fr}
+      .market{grid-template-columns:repeat(1,1fr)}
+      nav.primary{display:none}
+    }
+
+    @media (max-width:520px){
+      body{padding:14px}
+      .brand h1{font-size:16px}
+      .balance-amount{font-size:20px}
+      .stats{grid-template-columns:repeat(2,1fr)}
+    }
+
+    /* Micro interaction: subtle floating */
+    .float {
+      transform: translateY(0);
+      transition: transform 350ms cubic-bezier(.2,.9,.3,1), box-shadow 350ms;
+    }
+    .float:hover{transform: translateY(-6px);box-shadow:0 18px 40px rgba(12,18,35,0.08)}
+
+    /* Tiny polished inputs */
+    .form-row{display:flex;gap:8px}
+    input[type="text"],input[type="number"],select{padding:10px 12px;border-radius:10px;border:1px solid rgba(15,23,36,0.06);background:rgba(255,255,255,0.85);font-weight:600}
+
+    /* Chart canvas center */
+    .chart-wrap{display:grid;place-items:center;padding:18px}
+
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo">SE</div>
+        <div>
+          <h1>Student Economy</h1>
+          <p>Campus finance, simplified</p>
+        </div>
+      </div>
+
+      <nav class="primary">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#market">Marketplace</a>
+        <a href="#tips">Tips</a>
+        <button class="btn" id="accent-mode">Accent</button>
+      </nav>
+    </header>
+
+    <!-- Left column -->
+    <main class="left-col">
+
+      <!-- Hero card -->
+      <section class="card hero float">
+        <div class="hero-left">
+          <p class="hero-sub">Welcome back — here's a quick look at your campus economy</p>
+          <h2 class="hero-title">Main Wallet</h2>
+          <div class="balance">
+            <div class="balance-amount" id="balance">₦0.00</div>
+            <div class="badge" id="incomeBadge">+0 this week</div>
+          </div>
+        </div>
+
+        <div style="text-align:right">
+          <div style="margin-bottom:10px;color:var(--muted);font-size:13px">Quick actions</div>
+          <div class="controls">
+            <button class="btn" id="addIncome">Add Income</button>
+            <button class="btn secondary" id="addExpense">Add Expense</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- small stats -->
+      <section class="stats">
+        <div class="card stat float">
+          <h3>Monthly Spent</h3>
+          <p>₦0</p>
+        </div>
+        <div class="card stat float">
+          <h3>Savings Goal</h3>
+          <p>₦0 of ₦20,000</p>
+        </div>
+        <div class="card stat float">
+          <h3>Marketplace Listings</h3>
+          <p id="listingsCount">0</p>
+        </div>
+      </section>
+
+      <!-- Transactions + chart -->
+      <section class="card panel float">
+        <div class="transactions">
+          <h3 style="margin-top:0">Recent Transactions</h3>
+          <div class="tx-list" id="txList">
+            <!-- transactions dynamically inserted -->
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+            <input type="text" id="txTitle" placeholder="Title" />
+            <input type="number" id="txAmount" placeholder="Amount" />
+            <select id="txType"><option value="expense">Expense</option><option value="income">Income</option></select>
+            <button class="btn" id="saveTx">Save</button>
+          </div>
+        </div>
+
+        <aside class="card" style="height:100%">
+          <h3 style="margin-top:0">Spending Breakdown</h3>
+          <div class="chart-wrap">
+            <canvas id="donut" width="260" height="260" aria-label="Spending chart"></canvas>
+          </div>
+          <div style="font-size:13px;color:var(--muted);margin-top:8px">Tip: add some transactions to see the chart animate.</div>
+        </aside>
+      </section>
+
+      <!-- Marketplace preview -->
+      <section id="market" class="card float">
+        <h3 style="margin-top:0">Marketplace</h3>
+        <div class="market" id="marketGrid">
+          <!-- market cards -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Right column -->
+    <aside class="right-col">
+
+      <div class="card float">
+        <h4 style="margin-top:0">Savings Goal</h4>
+        <div style="font-weight:800;font-size:20px">₦0 / ₦20,000</div>
+        <div style="height:8px;background:linear-gradient(90deg, rgba(108,92,231,0.18), rgba(0,184,148,0.18));border-radius:999px;margin-top:12px;overflow:hidden">
+          <div id="goalFill" style="width:0%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px;transition:width:600ms ease"></div>
+        </div>
+      </div>
+
+      <div class="card float">
+        <h4 style="margin-top:0">Campus Gigs</h4>
+        <ul style="padding-left:16px;margin:0;color:var(--muted);font-size:14px">
+          <li>Library helper — ₦1,500</li>
+          <li>Note typist — ₦800</li>
+          <li>Event photographer — ₦4,000</li>
+        </ul>
+      </div>
+
+      <div class="card float">
+        <h4 style="margin-top:0">Money Tips</h4>
+        <ol class="tips" id="tipsList" style="padding-left:16px;margin:0;color:var(--muted);font-size:14px">
+          <li>Keep a 2-week emergency stash</li>
+          <li>Use peer buy groups to split costs</li>
+          <li>Sell textbooks after exams</li>
+        </ol>
+      </div>
+
+    </aside>
+
+    <footer>
+      Built with ❤️ — Student Economy Hub • Prototype (Light Theme)
+    </footer>
+
+  </div>
+
+  <!-- JavaScript: simple app shell + demo data -->
+  <script>
+    // Sample in-memory data (can be persisted to localStorage)
+    const SAMPLE = {
+      balance: 12500,
+      transactions: [
+        {id:1,title:'Groceries',amount:1200,type:'expense',avatar:'G'},
+        {id:2,title:'Campus gig',amount:4000,type:'income',avatar:'C'},
+        {id:3,title:'Books (sale)',amount:1800,type:'income',avatar:'B'},
+        {id:4,title:'Transport',amount:600,type:'expense',avatar:'T'}
+      ],
+      market:[
+        {id:1,title:'Calculus Textbook',price:2500,img:''},
+        {id:2,title:'Vintage Jacket',price:3200,img:''},
+        {id:3,title:'Laptop Charger',price:1800,img:''},
+        {id:4,title:'Notes Bundle',price:800,img:''}
+      ]
+    }
+
+    // ----- Utilities -----
+    const $ = (s)=>document.querySelector(s);
+    const $all = (s)=>document.querySelectorAll(s);
+
+    // Initialize
+    function init(){
+      // hydrate from localStorage if present
+      const saved = JSON.parse(localStorage.getItem('se_data')||'null');
+      window.app = saved || SAMPLE;
+      renderAll();
+      attachEvents();
+      drawDonut();
+    }
+
+    // Render functions
+    function renderAll(){
+      $('#balance').textContent = formatCurrency(window.app.balance);
+      $('#listingsCount').textContent = window.app.market.length;
+      renderTxList();
+      renderMarket();
+      updateGoal();
+    }
+
+    function renderTxList(){
+      const wrap = $('#txList'); wrap.innerHTML='';
+      window.app.transactions.slice().reverse().forEach(tx=>{
+        const el = document.createElement('div'); el.className='tx card';
+        el.innerHTML = `
+          <div class="meta">
+            <div class="avatar" style="background:linear-gradient(135deg, rgba(108,92,231,0.12), rgba(0,184,148,0.06));">${tx.avatar||tx.title[0]}</div>
+            <div>
+              <div style="font-weight:700">${tx.title}</div>
+              <div style="font-size:12px;color:var(--muted)">${tx.type} • ${new Date().toLocaleDateString()}</div>
+            </div>
+          </div>
+          <div class="amount ${tx.type==='expense'?'expense':'income'}">${tx.type==='expense'?'-':''}${formatCurrency(tx.amount)}</div>
+        `;
+        wrap.appendChild(el);
+      });
+    }
+
+    function renderMarket(){
+      const grid = $('#marketGrid'); grid.innerHTML='';
+      window.app.market.forEach(m=>{
+        const c = document.createElement('div'); c.className='market-card card float';
+        c.innerHTML = `
+          <img src="https://picsum.photos/seed/market${m.id}/400/300" alt="${escapeHtml(m.title)}" />
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:800">${escapeHtml(m.title)}</div>
+              <div style="font-size:13px;color:var(--muted)">Seller: Campus Board</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-weight:800">${formatCurrency(m.price)}</div>
+              <button class="btn" data-id="${m.id}" onclick="buyItem(${m.id})">Buy</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(c);
+      });
+    }
+
+    function updateGoal(){
+      const goal = 20000; const saved = window.app.balance; const pct = Math.min(100, Math.round((saved/goal)*100));
+      $('#goalFill').style.width = pct + '%';
+      // small text
+      document.querySelectorAll('.stat')[1].querySelector('p').textContent = `₦${numberWithCommas(saved)} of ₦${numberWithCommas(goal)}`;
+    }
+
+    // ----- Actions -----
+    function attachEvents(){
+      $('#saveTx').addEventListener('click',()=>{
+        const title = $('#txTitle').value.trim(); const amount = Number($('#txAmount').value); const type = $('#txType').value;
+        if(!title || !amount) return alert('Provide title and amount');
+        addTransaction(title, amount, type);
+        $('#txTitle').value=''; $('#txAmount').value='';
+      });
+      $('#addIncome').addEventListener('click',()=>{quickAdd('income')});
+      $('#addExpense').addEventListener('click',()=>{quickAdd('expense')});
+      $('#accent-mode').addEventListener('click',()=>{flashAccent()});
+    }
+
+    function addTransaction(title,amount,type){
+      const id = Date.now(); const avatar = title[0].toUpperCase();
+      window.app.transactions.push({id,title,amount,type,avatar});
+      if(type==='income') window.app.balance += amount; else window.app.balance -= amount;
+      persist(); renderAll();animateChart();
+    }
+
+    function quickAdd(type){
+      const label = type==='income'? 'Pocket money' : 'Coffee';
+      addTransaction(label, type==='income'?2000:400, type);
+    }
+
+    function buyItem(id){
+      const item = window.app.market.find(m=>m.id===id);
+      if(!item) return;
+      if(window.app.balance < item.price) return alert('Not enough balance');
+      addTransaction('Bought: '+item.title,item.price,'expense');
+      alert('Purchase successful — check Transactions');
+    }
+
+    // persistence
+    function persist(){ localStorage.setItem('se_data', JSON.stringify(window.app)); }
+
+    // ----- Chart (donut) -----
+    const donut = document.getElementById('donut');
+    const ctx = donut.getContext('2d');
+    function drawDonut(){
+      // initial draw
+      ctx.clearRect(0,0,donut.width,donut.height);
+      // background ring
+      ctx.beginPath(); ctx.arc(130,130,96,0,Math.PI*2); ctx.lineWidth=22; ctx.strokeStyle='rgba(15,23,36,0.06)'; ctx.stroke();
+      animateChart();
+    }
+
+    function animateChart(){
+      const data = window.app.transactions.reduce((acc,tx)=>{ acc[tx.type]= (acc[tx.type]||0)+tx.amount; return acc },{});
+      const income = data.income||0; const expense = data.expense||0; const total = income+expense || 1;
+      const expensePct = expense/total;
+
+      // animate by frames
+      let progress=0; const target = expensePct;
+      const frames = 40; const step = target/frames;
+      const id = setInterval(()=>{
+        progress += step; if(progress >= target){progress = target; clearInterval(id)}
+        drawDonutFrame(progress);
+      },12);
+    }
+
+    function drawDonutFrame(expenseFraction){
+      ctx.clearRect(0,0,donut.width,donut.height);
+      // background
+      ctx.beginPath(); ctx.arc(130,130,96,0,Math.PI*2); ctx.lineWidth=22; ctx.strokeStyle='rgba(15,23,36,0.06)'; ctx.stroke();
+      // expense arc
+      const start = -Math.PI/2;
+      const expenseAngle = expenseFraction * Math.PI*2;
+      ctx.beginPath(); ctx.arc(130,130,96,start,start+expenseAngle); ctx.lineWidth=22; ctx.strokeStyle='rgba(255,99,132,0.95)'; ctx.stroke();
+      // income arc (rest)
+      ctx.beginPath(); ctx.arc(130,130,96,start+expenseAngle,start+Math.PI*2); ctx.lineWidth=22; ctx.strokeStyle='rgba(108,92,231,0.95)'; ctx.stroke();
+      // center label
+      ctx.font = '700 18px Inter, system-ui'; ctx.fillStyle = 'rgba(15,23,36,0.9)'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      const expense = Math.round(expenseFraction*100);
+      ctx.fillText(expense + '% spent',130,130);
+    }
+
+    // ----- helpers -----
+    function formatCurrency(n){ return '₦'+numberWithCommas(Math.round(n)); }
+    function numberWithCommas(x){ return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g,","); }
+    function escapeHtml(s){ return s.replace(/[&<>\"]+/g, function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]||ch}); }
+
+    // small accent flash to show polish
+    function flashAccent(){
+      const body = document.body; body.animate([{filter:'saturate(1)'},{filter:'saturate(1.08)'}],{duration:420,iterations:1});
+    }
+
+    // init app
+    init();
+  </script>
+</body>
+</html>
